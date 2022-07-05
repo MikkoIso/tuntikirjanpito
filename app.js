@@ -14,8 +14,4 @@ async function projekti() {}
 
 async function selite() {}
 
-async function aloituspvm() {}
-
-async function aloitusklo() {}
-
 async function tulostakirjaus() {}
