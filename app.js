@@ -15,7 +15,7 @@ async function aloitus() {
       console.log("Aloituspäivämäärän lisääminen ei onnistunut");
     } else {
       tuntikirjaus.aloitus = date;
-      console.log(`Aloituspäivämäärä  ja -aika: ${pvm} ${klo}`);
+      console.log(`Aloituspäivämäärä  ja -aika: ${pvm} ${klo} \n`);
       jatka = false;
     }
   } while (jatka);
