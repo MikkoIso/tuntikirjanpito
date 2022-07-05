@@ -1,0 +1,20 @@
+{
+  "name": "tuntikirjanpito",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AW Academy projekti 1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikkoIso/tuntikirjanpito.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MikkoIso/tuntikirjanpito/issues"
+  },
+  "homepage": "https://github.com/MikkoIso/tuntikirjanpito#readme"
+}
