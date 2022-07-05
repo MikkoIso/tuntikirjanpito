@@ -40,19 +40,49 @@ async function lopetus() {
   } while (jatka);
 }
 
-// Tarkista, että validi päivämäärä: validoipvm()
+async function projekti() {
+  let jatka = true;
+  do {
+    const projekti = prompt("Anna projektin nimi: ");
+    if (projekti === "") {
+      console.log("Projektin nimi ei voi olla tyhjä");
+    } else {
+      tuntikirjaus.projekti = projekti;
+      console.log(`Projektin nimi: ${projekti} \n`);
+      jatka = false;
+    }
+  } while (jatka);
+}
 
-// Tarkista, että validi kellonaika
-// Tarkista että aloitus (pvm & klo) < lopetus (pvm & klo)
+async function selite() {
+  let jatka = true;
+  do {
+    const selite = prompt("Kerro mitä on tehty: ");
+    if (selite === "") {
+      console.log("Selite ei voi olla tyhjä");
+    } else {
+      tuntikirjaus.selite = selite;
+      console.log(`Annettu selite: ${selite}\n`);
+      jatka = false;
+    }
+  } while (jatka);
+}
 
-async function projekti() {}
-
-async function selite() {}
+async function tuntisumma() {
+  const a = Date.parse(tuntikirjaus.aloitus);
+  const l = Date.parse(tuntikirjaus.lopetus);
+  const summa = (l - a) / 3600000;
+  tuntikirjaus.tuntisumma = summa;
+}
 
 async function kaynnista() {
   console.log("Tervetuloa tuntikirjanpitoon! \n");
   aloitus();
   lopetus();
+  projekti();
+  selite();
+  tuntisumma();
+  console.log("Tuntikirjaus lisätty! \n");
   const obj = JSON.stringify(tuntikirjaus);
   console.log(obj);
 }
