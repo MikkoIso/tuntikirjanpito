@@ -4,6 +4,16 @@ const prompt = promptSync();
 
 const tuntikirjaus = {};
 
+function validoipvm(date) {
+  const a = Date.parse(tuntikirjaus.aloitus);
+  const l = Date.parse(date);
+  if (a > l) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 async function aloitus() {
   let jatka = true;
   do {
@@ -29,9 +39,13 @@ async function lopetus() {
     const pvm = prompt("Anna lopetuspäivämäärä muodossa yyyy-mm-dd: ");
     const klo = prompt("Anna lopetuskellonaika muodossa hh:mm:ss: ");
     const date = new Date(pvm + " " + klo);
+
     if (isNaN(date)) {
-      // Tarkista, että validi päivämäärä: validoipvm()
       console.log("Lopetuspäivämäärän lisääminen ei onnistunut");
+    }
+
+    if (validoipvm(date) === false) {
+      console.log("Lopetuspäivämäärä ei voi olla ennen aloituspäivämäärää");
     } else {
       tuntikirjaus.lopetus = date;
       console.log(`Lopetuspäivämäärä  ja -aika: ${pvm} ${klo} \n`);
@@ -42,6 +56,7 @@ async function lopetus() {
 
 async function projekti() {
   let jatka = true;
+
   do {
     const projekti = prompt("Anna projektin nimi: ");
     if (projekti === "") {
@@ -56,6 +71,7 @@ async function projekti() {
 
 async function selite() {
   let jatka = true;
+
   do {
     const selite = prompt("Kerro mitä on tehty: ");
     if (selite === "") {
