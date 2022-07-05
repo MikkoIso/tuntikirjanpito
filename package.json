@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/MikkoIso/tuntikirjanpito/issues"
   },
-  "homepage": "https://github.com/MikkoIso/tuntikirjanpito#readme"
+  "homepage": "https://github.com/MikkoIso/tuntikirjanpito#readme",
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
+  }
 }
