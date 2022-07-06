@@ -1,10 +1,18 @@
-// Import required AWS SDK clients and commands for Node.js
+"use strict";
 import { PublishCommand } from "@aws-sdk/client-sns";
 import { snsClient } from "./libs/snsClient.js";
+import { haeTietokannasta } from "./datasiirto.js";
+import viestipohja from "./viestipohja.js";
+
+let data = await haeTietokannasta();
+
+const viesti = viestipohja(data);
+
+// console.log(viesti);
 
 // Set the parameters
 var params = {
-  Message: "KINKUT ON KUUMII!", // MESSAGE_TEXT
+  Message: viesti, // MESSAGE_TEXT
   TopicArn: "arn:aws:sns:eu-north-1:235920682125:kuumakinkkukeskustelu", //TOPIC_ARN;
 };
 

@@ -4,7 +4,7 @@ import "dotenv/config";
 import pg from "pg";
 const { Pool } = pg;
 const pool = new Pool({
-  connectionString: process.env.DB_CONNECTIONSTRING,
+  connectionString: process.env.DB_CONNECTIONSTRING_WORLD,
 });
 
 export default async function lataaTietokantaan(kirjaus) {
@@ -33,7 +33,11 @@ export async function haeTietokannasta() {
   const client = await pool.connect();
   try {
     const response = await client.query("SELECT * from tuntikirjaus;", []);
-    return response.rows;
+    const tunnit = await client.query(
+      "SELECT SUM(tuntisumma) from tuntikirjaus;",
+      []
+    );
+    return { tapahtumat: response.rows, tuntisumma: tunnit.rows[0] };
   } catch (e) {
     console.log(e);
     throw e;
