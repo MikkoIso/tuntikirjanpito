@@ -28,3 +28,16 @@ export default async function lataaTietokantaan(kirjaus) {
     client.release();
   }
 }
+
+export async function haeTietokannasta() {
+  const client = await pool.connect();
+  try {
+    const response = await client.query("SELECT * from tuntikirjaus;", []);
+    return response.rows;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  } finally {
+    client.release();
+  }
+}
