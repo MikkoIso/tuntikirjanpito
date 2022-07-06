@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/MikkoIso/tuntikirjanpito#readme",
   "dependencies": {
+    "dotenv": "^16.0.1",
+    "pg": "^8.7.3",
     "prompt-sync": "^4.2.0"
   }
 }

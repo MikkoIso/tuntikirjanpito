@@ -18,7 +18,7 @@ export default async function lataaTietokantaan(kirjaus) {
         kirjaus.selite,
       ]
     );
-    console.log("Kirjauksesi on tallennettu tietokantaan.");
+    // console.log("Kirjauksesi on tallennettu tietokantaan.");
   } catch (e) {
     console.log("Virhe tietokantaan tallennuksessa!");
     throw e;

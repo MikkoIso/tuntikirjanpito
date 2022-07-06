@@ -1,5 +1,6 @@
 "use strict";
 import promptSync from "prompt-sync";
+import lataaTietokantaan from "./datasiirto.js";
 const prompt = promptSync();
 
 const tuntikirjaus = {};
@@ -98,9 +99,14 @@ async function kaynnista() {
   projekti();
   selite();
   tuntisumma();
-  console.log("Tuntikirjaus lisätty! \n");
-  const obj = JSON.stringify(tuntikirjaus);
-  console.log(obj);
+  await lataaTietokantaan(tuntikirjaus); // virheenhallinta puuttuu
+  console.log(`Tuntikirjaus lisätty seuraavin tiedoin!
+  Projekti: ${tuntikirjaus.projekti},
+  Aloitus: ${tuntikirjaus.aloitus}  Lopetus: ${tuntikirjaus.lopetus}  Tehdyt tunnit: ${tuntikirjaus.tuntisumma}
+  Selite: ${tuntikirjaus.selite}.`);
+
+  //const obj = JSON.stringify(tuntikirjaus);
+  // console.log(obj);
 }
 
 kaynnista();
