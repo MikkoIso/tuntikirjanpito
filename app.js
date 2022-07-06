@@ -26,7 +26,7 @@ async function aloitus() {
       console.log("Aloituspäivämäärän lisääminen ei onnistunut");
     } else {
       tuntikirjaus.aloitus = date;
-      console.log(`Aloituspäivämäärä  ja -aika: ${pvm} ${klo} \n`);
+      console.log(`Aloituspäivämäärä ja -aika: ${pvm} ${klo} \n`);
       jatka = false;
     }
   } while (jatka);
@@ -49,7 +49,7 @@ async function lopetus() {
       console.log("Lopetuspäivämäärä ei voi olla ennen aloituspäivämäärää");
     } else {
       tuntikirjaus.lopetus = date;
-      console.log(`Lopetuspäivämäärä  ja -aika: ${pvm} ${klo} \n`);
+      console.log(`Lopetuspäivämäärä ja -aika: ${pvm} ${klo} \n`);
       jatka = false;
     }
   } while (jatka);
@@ -89,7 +89,7 @@ async function tuntisumma() {
   const a = Date.parse(tuntikirjaus.aloitus);
   const l = Date.parse(tuntikirjaus.lopetus);
   const summa = (l - a) / 3600000;
-  tuntikirjaus.tuntisumma = summa;
+  tuntikirjaus.tuntisumma = Number(Math.round(summa + "e" + 2) + "e-" + 2);
 }
 
 async function kaynnista() {
@@ -100,10 +100,11 @@ async function kaynnista() {
   selite();
   tuntisumma();
   await lataaTietokantaan(tuntikirjaus); // virheenhallinta puuttuu
-  console.log(`Tuntikirjaus lisätty seuraavin tiedoin!
+  console.log(`Tuntikirjaus lisätty seuraavin tiedoin:
+  
   Projekti: ${tuntikirjaus.projekti},
-  Aloitus: ${tuntikirjaus.aloitus}  Lopetus: ${tuntikirjaus.lopetus}  Tehdyt tunnit: ${tuntikirjaus.tuntisumma}
-  Selite: ${tuntikirjaus.selite}.`);
+  Aloitus: ${tuntikirjaus.aloitus}  Lopetus: ${tuntikirjaus.lopetus}
+  Tehdyt tunnit: ${tuntikirjaus.tuntisumma} Selite: ${tuntikirjaus.selite}`);
 
   //const obj = JSON.stringify(tuntikirjaus);
   // console.log(obj);

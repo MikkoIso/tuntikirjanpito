@@ -3,7 +3,9 @@
 import "dotenv/config";
 import pg from "pg";
 const { Pool } = pg;
-const pool = new Pool({ connectionString: process.env.DB_CONNECTIONSTRING });
+const pool = new Pool({
+  connectionString: process.env.DB_CONNECTIONSTRING,
+});
 
 export default async function lataaTietokantaan(kirjaus) {
   const client = await pool.connect();
