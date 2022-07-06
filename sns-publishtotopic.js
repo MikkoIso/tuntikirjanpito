@@ -4,8 +4,8 @@ import { snsClient } from "./libs/snsClient.js";
 
 // Set the parameters
 var params = {
-  Message: "Tähän viestin message.", // MESSAGE_TEXT
-  TopicArn: "TÄHÄN TOPIC ARN", //TOPIC_ARN;
+  Message: "KINKUT ON KUUMII!", // MESSAGE_TEXT
+  TopicArn: "arn:aws:sns:eu-north-1:235920682125:kuumakinkkukeskustelu", //TOPIC_ARN;
 };
 
 export const publishToTopic = async () => {
@@ -17,4 +17,5 @@ export const publishToTopic = async () => {
     console.log("Error", err.stack);
   }
 };
+
 publishToTopic();
