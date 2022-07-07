@@ -1,5 +1,6 @@
 "use strict";
 
+// Muotoillaan tietokantahausta mukavannäköinen viesti
 export default function muotoilu(data) {
   let viesti = `Tuntiraportti
 

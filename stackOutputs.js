@@ -3,6 +3,7 @@ import CloudFormation from "aws-sdk/clients/cloudformation.js";
 const region = "eu-north-1";
 const stackName = "KuumatKinkut";
 
+// Nouda SNS ARN-osoite pyydetystä Stack:istä
 export async function getStackExports(
   { stackName, region },
   byOutputKey = false

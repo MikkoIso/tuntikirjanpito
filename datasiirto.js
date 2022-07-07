@@ -5,11 +5,14 @@ import pg from "pg";
 import AWS from "aws-sdk";
 const { Pool } = pg;
 
+// Haetaan kirjautumistiedot tietokantayhteyttä varten
 let secretManager = new AWS.SecretsManager({ region: "eu-north-1" });
 const data = await secretManager
   .getSecretValue({ SecretId: "kinkkusalaisuus" })
   .promise();
 let secret = JSON.parse(data.SecretString);
+
+// Määritellään tietokantayhteys
 const pool = new Pool({
   user: secret.username,
   host: secret.host,
@@ -17,7 +20,7 @@ const pool = new Pool({
   password: secret.password,
   port: 5432,
 });
-
+// Funktio tietokannasta hakemiselle
 export default async function lataaTietokantaan(kirjaus) {
   const client = await pool.connect();
   try {
@@ -39,7 +42,7 @@ export default async function lataaTietokantaan(kirjaus) {
     client.release();
   }
 }
-
+// Funktio tietokannasta hakemiselle
 export async function haeTietokannasta() {
   const client = await pool.connect();
   try {

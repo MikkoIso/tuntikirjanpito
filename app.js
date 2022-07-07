@@ -5,6 +5,7 @@ const prompt = promptSync();
 
 const tuntikirjaus = {};
 
+// Validoidaan, että lopetusajankohta (pvm + aika eli 'date') on aloitusajankohdan jälkeen.
 function validoipvm(date) {
   const a = Date.parse(tuntikirjaus.aloitus);
   const l = Date.parse(date);
@@ -14,15 +15,15 @@ function validoipvm(date) {
     return true;
   }
 }
-
+// Pyydä ja lue aloitusaika
 async function aloitus() {
   let jatka = true;
   do {
     const pvm = prompt("Anna aloituspäivämäärä muodossa yyyy-mm-dd: ");
     const klo = prompt("Anna aloituskellonaika muodossa hh:mm:ss: ");
     const date = new Date(pvm + " " + klo);
+    // // Tarkista, että validi päivämäärä
     if (isNaN(date)) {
-      // Tarkista, että validi päivämäärä: validoipvm()
       console.log("Aloituspäivämäärän lisääminen ei onnistunut");
     } else {
       tuntikirjaus.aloitus = date;
@@ -40,7 +41,7 @@ async function lopetus() {
     const pvm = prompt("Anna lopetuspäivämäärä muodossa yyyy-mm-dd: ");
     const klo = prompt("Anna lopetuskellonaika muodossa hh:mm:ss: ");
     const date = new Date(pvm + " " + klo);
-
+    // Tarkista, että validi päivämäärä ja että lopetusajankohta on aloitusajankohdan jälkeen
     if (isNaN(date)) {
       console.log("Lopetuspäivämäärän lisääminen ei onnistunut");
     }
@@ -54,7 +55,7 @@ async function lopetus() {
     }
   } while (jatka);
 }
-
+// Pyydä ja lue projekti nimi
 async function projekti() {
   let jatka = true;
 
@@ -69,7 +70,7 @@ async function projekti() {
     }
   } while (jatka);
 }
-
+// Pyydä ja lue selite
 async function selite() {
   let jatka = true;
 
@@ -84,14 +85,14 @@ async function selite() {
     }
   } while (jatka);
 }
-
+// Lasketaan tuntisumma aloitus- ja lopetusajan perusteella.
 async function tuntisumma() {
   const a = Date.parse(tuntikirjaus.aloitus);
   const l = Date.parse(tuntikirjaus.lopetus);
   const summa = (l - a) / 3600000;
   tuntikirjaus.tuntisumma = Number(Math.round(summa + "e" + 2) + "e-" + 2);
 }
-
+// Pääohjelma
 async function kaynnista() {
   console.log("Tervetuloa tuntikirjanpitoon! \n");
   aloitus();
@@ -110,4 +111,4 @@ async function kaynnista() {
   // console.log(obj);
 }
 
-kaynnista();
+kaynnista(); // Tekee just sen, mitä väittää tekevänsä

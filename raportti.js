@@ -5,8 +5,10 @@ import { haeTietokannasta } from "./datasiirto.js";
 import viestipohja from "./viestipohja.js";
 import { getStackExports } from "./stackOutputs.js";
 
+// Haetaan tietokannasta tiedot
 let data = await haeTietokannasta();
 
+// Muotoillaan viesti sähköpostia varten
 const viesti = viestipohja(data);
 
 // console.log(viesti);
@@ -14,12 +16,12 @@ const viesti = viestipohja(data);
 const region = "eu-north-1";
 const stackName = "KuumatKinkut";
 
-// Set the parameters
+// Määritellään komento SNS:lle
 var params = {
-  Message: viesti, // MESSAGE_TEXT
-  TopicArn: await getStackExports({ stackName, region }), //TOPIC_ARN;
+  Message: viesti,
+  TopicArn: await getStackExports({ stackName, region }), // Noudetaan aiheen ARN osoite Stackistä YML
 };
-
+// Lähetä viesti -funktio
 export const publishToTopic = async () => {
   try {
     const data = await snsClient.send(new PublishCommand(params));
