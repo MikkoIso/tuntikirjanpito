@@ -28,5 +28,3 @@ export async function getStackExports(
   });
   return Object.values(exportsList)[0];
 }
-
-//console.log(await getStackExports({ stackName, region }));
