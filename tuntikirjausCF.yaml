@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Project tuntikirjaus CloudFormation template"
 
-# aws cloudformation --region eu-north-1 create-stack --stack-name KuumatKinkut --template-body file://VPC.yaml
-# aws cloudformation deploy --template-file VPC.yaml --stack-name KuumatKinkut --region eu-north-1
+# aws cloudformation --region eu-north-1 create-stack --stack-name KuumatKinkut --template-body file://tuntikirjausCF.yaml
+# aws cloudformation deploy --template-file tuntikirjausCF.yaml --stack-name KuumatKinkut --region eu-north-1
 #
 # VPC ID: vpc-08af66286fbedb397
 # SUBNET ID: subnet-0c22f264c88c0609e
@@ -147,7 +147,7 @@ Resources:
         SecretStringTemplate: '{"username": "kinkku"}'
         GenerateStringKey: password
         PasswordLength: 32
-        ExcludeCharacters: '"@/\'
+        ExcludePunctuation: true
       Name: kinkkusalaisuus
 
   # Database
