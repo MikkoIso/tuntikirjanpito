@@ -2,9 +2,20 @@
 
 import "dotenv/config";
 import pg from "pg";
+import AWS from "aws-sdk";
 const { Pool } = pg;
+
+let secretManager = new AWS.SecretsManager({ region: "eu-north-1" });
+const data = await secretManager
+  .getSecretValue({ SecretId: "kinkkusalaisuus" })
+  .promise();
+let secret = JSON.parse(data.SecretString);
 const pool = new Pool({
-  connectionString: process.env.DB_CONNECTIONSTRING_WORLD,
+  user: secret.username,
+  host: secret.host,
+  database: secret.dbname,
+  password: secret.password,
+  port: 5432,
 });
 
 export default async function lataaTietokantaan(kirjaus) {
