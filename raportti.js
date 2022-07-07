@@ -25,7 +25,7 @@ var params = {
 export const publishToTopic = async () => {
   try {
     const data = await snsClient.send(new PublishCommand(params));
-    console.log("Sähköposti lähetetty.", data);
+    console.log("Sähköposti lähetetty.");
     return data; // For unit tests.
   } catch (err) {
     console.log("Error", err.stack);
