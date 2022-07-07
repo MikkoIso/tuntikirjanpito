@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/MikkoIso/tuntikirjanpito#readme",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.121.0",
+    "@aws-sdk/client-sns": "^3.121.0",
+    "aws-sdk": "^2.1169.0",
+    "dotenv": "^16.0.1",
+    "pg": "^8.7.3",
     "prompt-sync": "^4.2.0"
   }
 }
