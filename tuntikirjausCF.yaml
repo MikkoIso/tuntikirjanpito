@@ -1,0 +1,205 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Project tuntikirjaus CloudFormation template"
+
+# aws cloudformation --region eu-north-1 create-stack --stack-name KuumatKinkut --template-body file://VPC.yaml
+# aws cloudformation deploy --template-file VPC.yaml --stack-name KuumatKinkut --region eu-north-1
+#
+# VPC ID: vpc-08af66286fbedb397
+# SUBNET ID: subnet-0c22f264c88c0609e
+#
+#
+#
+
+Parameters:
+  TopicName:
+    Type: String
+    Default: kinkkutyotunnit
+
+Resources:
+  KinkkuVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: KinkkuVPC
+
+  # Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn: KinkkuVPC
+    Properties:
+      Tags:
+        - Key: Name
+          Value: KinkkuGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: InternetGateway
+    Properties:
+      VpcId: !Ref KinkkuVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Subnets
+  SubnetPublic:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: eu-north-1c
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref "KinkkuVPC"
+      CidrBlock: "10.0.1.0/24"
+      Tags:
+        - Key: Name
+          Value: KinkkunetPub
+
+  SubnetPublic2:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      AvailabilityZone: eu-north-1b
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref "KinkkuVPC"
+      CidrBlock: "10.0.2.0/24"
+      Tags:
+        - Key: Name
+          Value: KinkkunetPub2
+
+  # Route tables
+  RouteTablePub:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      VpcId: !Ref "KinkkuVPC"
+      Tags:
+        - Key: Name
+          Value: KinkkuPubRT
+
+  PublicRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref RouteTablePub
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # Route table -assosiaatiot
+  RouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTablePub
+      SubnetId: !Ref SubnetPublic
+
+  RouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTablePub
+      SubnetId: !Ref SubnetPublic2
+
+  PrefixList:
+    Type: AWS::EC2::PrefixList
+    Properties:
+      AddressFamily: "IPv4"
+      Entries:
+        - Cidr: "194.157.196.154/32"
+          Description: "User"
+      MaxEntries: 6
+      PrefixListName: KinkkuPL
+      Tags:
+        - Key: Name
+          Value: KinkkuPL
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Kinkkujen turvaryhma"
+      GroupName: KuumatKinkut
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: "0.0.0.0/0"
+      VpcId: !Ref "KinkkuVPC"
+
+  Ingressi:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: "Allow access for team members"
+      FromPort: 5432
+      GroupId: !Ref SecurityGroup
+      IpProtocol: tcp
+      SourcePrefixListId: !Ref PrefixList
+      ToPort: 5432
+
+  SubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupName: "subnetgroup"
+      DBSubnetGroupDescription: "Subnet Group"
+      SubnetIds:
+        - !Ref "SubnetPublic"
+        - !Ref "SubnetPublic2"
+
+  # Secret key is secret
+
+  KinkkuSalaisuus:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: Credentials for the RDS
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "kinkku"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+      Name: kinkkusalaisuus
+
+  # Database
+
+  Kinkkukanta:
+    Type: AWS::RDS::DBInstance
+    DependsOn:
+      - "SecurityGroup"
+      - "InternetGateway"
+    Properties:
+      AllocatedStorage: "20"
+      AvailabilityZone: eu-north-1c
+      BackupRetentionPeriod: 1
+      DBInstanceClass: db.t3.micro
+      DBInstanceIdentifier: kinkkukanta
+      DBName: Kinkkukanta
+      DBSubnetGroupName: !Ref SubnetGroup
+      EnableCloudwatchLogsExports:
+        - postgresql
+        - upgrade
+      EnableIAMDatabaseAuthentication: true
+      Engine: postgres
+      MasterUsername: !Sub "{{resolve:secretsmanager:${KinkkuSalaisuus}::username}}"
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${KinkkuSalaisuus}::password}}"
+      PubliclyAccessible: true
+      Tags:
+        - Key: Name
+          Value: Kinkkukanta
+      VPCSecurityGroups:
+        - !Ref SecurityGroup
+
+  # Secret attachment
+
+  KinkkuKiinnitys:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    DependsOn: "Kinkkukanta"
+    Properties:
+      SecretId: !Ref KinkkuSalaisuus
+      TargetId: !Ref Kinkkukanta # Mitens tama ref?
+      TargetType: "AWS::RDS::DBInstance"
+
+  # SNS TOPIC
+
+  MySNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: ""
+          Protocol: "email"
+      TopicName: !Ref TopicName
+
+Outputs:
+  MyTopicArn:
+    Description: Arn of Created SNS Topic
+    Value: !Ref MySNSTopic
