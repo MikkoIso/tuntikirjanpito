@@ -2,8 +2,8 @@
 node_modules/
 package-lock.json
 
-
 # Testaus resurssit
 .env
 test.js
 db_luonti.sql
+
