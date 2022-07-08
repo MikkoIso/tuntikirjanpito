@@ -4,8 +4,8 @@ Description: "Project tuntikirjaus CloudFormation template"
 # aws cloudformation --region eu-north-1 create-stack --stack-name KuumatKinkut --template-body file://tuntikirjausCF.yaml
 # aws cloudformation deploy --template-file tuntikirjausCF.yaml --stack-name KuumatKinkut --region eu-north-1
 #
-# VPC ID: vpc-08af66286fbedb397
-# SUBNET ID: subnet-0c22f264c88c0609e
+#
+#
 #
 #
 #
@@ -14,6 +14,10 @@ Parameters:
   TopicName:
     Type: String
     Default: kinkkutyotunnit
+
+  # LatestAmiId:
+  #   Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+  #   Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-kernel-5.10-hvm-x86_64-gp2"
 
 Resources:
   KinkkuVPC:
@@ -118,6 +122,21 @@ Resources:
           CidrIp: "0.0.0.0/0"
       VpcId: !Ref "KinkkuVPC"
 
+  #  SecurityGroupEC:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: "Kinkkujen turvaryhma 2"
+  #     GroupName: KuumatKinkkulit
+  #     SecurityGroupEgress:
+  #       - IpProtocol: "-1"
+  #         CidrIp: "0.0.0.0/0"
+  #     SecurityGroupIngress:
+  #       - FromPort: 5432
+  #         CidrIp: 194.157.196.154/32
+  #         IpProtocol: tcp
+  #         ToPort: 5432
+  #     VpcId: !Ref "KinkkuVPC"
+
   Ingressi:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -127,6 +146,16 @@ Resources:
       IpProtocol: tcp
       SourcePrefixListId: !Ref PrefixList
       ToPort: 5432
+
+  # IngressiEC2:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties:
+  #     Description: "Allow access for EC2"
+  #     FromPort: 5432
+  #     GroupId: !Ref SecurityGroupEC
+  #     IpProtocol: tcp
+  #     SourceSecurityGroupId: !Ref SecurityGroupEC2
+  #     ToPort: 5432
 
   SubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
@@ -149,6 +178,24 @@ Resources:
         PasswordLength: 32
         ExcludePunctuation: true
       Name: kinkkusalaisuus
+
+  # EC2
+  # Kinkkukone:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     AvailabilityZone: eu-north-1a
+  #     ImageId: !Ref LatestAmiId
+  #     InstanceType: t3.micro
+  #     SecurityGroupIds:
+  #       - !Ref SecurityGroup
+  #     Tags:
+  #       - Key: Owner
+  #         Value: !Ref OwnerName
+  #       - Key: Name
+  #         Value: emmin-assessment-ec2
+  #     UserData:
+  #       Fn::Base64:
+  #         Lisaa tahana userdata
 
   # Database
 
@@ -186,7 +233,7 @@ Resources:
     DependsOn: "Kinkkukanta"
     Properties:
       SecretId: !Ref KinkkuSalaisuus
-      TargetId: !Ref Kinkkukanta # Mitens tama ref?
+      TargetId: !Ref Kinkkukanta
       TargetType: "AWS::RDS::DBInstance"
 
   # SNS TOPIC
